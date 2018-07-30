@@ -425,3 +425,98 @@ m5.14 <- map(
   ),
   data=d )
 precis(m5.14)
+
+# 5.44
+data(Howell1)
+d <- Howell1
+str(d)
+
+# 5.45
+m5.15 <- map(
+  alist(
+    height ~ dnorm( mu , sigma ) ,
+    mu <- a + bm*male ,
+    a ~ dnorm( 178 , 100 ) ,
+    bm ~ dnorm( 0 , 10 ) ,
+    sigma ~ dunif( 0 , 50 )
+  ) ,
+  data=d )
+precis(m5.15)
+
+# 5.46
+post <- extract.samples(m5.15)
+mu.male <- post$a + post$bm
+PI(mu.male)
+
+# 5.47
+m5.15b <- map(
+  alist(
+    height ~ dnorm( mu , sigma ) ,
+    mu <- af*(1-male) + am*male ,
+    af ~ dnorm( 178 , 100 ) ,
+    am ~ dnorm( 178 , 100 ) ,
+    sigma ~ dunif( 0 , 50 )
+  ) ,
+  data=d )
+
+# 5.48
+data(milk)
+d <- milk
+unique(d$clade)
+
+# 5.49
+( d$clade.NWM <- ifelse( d$clade=="New World Monkey" , 1 , 0 ) )
+
+# 5.50
+d$clade.OWM <- ifelse( d$clade=="Old World Monkey" , 1 , 0 )
+d$clade.S <- ifelse( d$clade=="Strepsirrhine" , 1 , 0 )
+
+# 5.51
+m5.16 <- map(
+  alist(
+    kcal.per.g ~ dnorm( mu , sigma ) ,
+    mu <- a + b.NWM*clade.NWM + b.OWM*clade.OWM + b.S*clade.S ,
+    a ~ dnorm( 0.6 , 10 ) ,
+    b.NWM ~ dnorm( 0 , 1 ) ,
+    b.OWM ~ dnorm( 0 , 1 ) ,
+    b.S ~ dnorm( 0 , 1 ) ,
+    sigma ~ dunif( 0 , 10 )
+  ) ,
+  data=d )
+precis(m5.16)
+
+# 5.52
+# sample posterior
+post <- extract.samples(m5.16)
+# compute averages for each category
+mu.ape <- post$a
+mu.NWM <- post$a + post$b.NWM
+mu.OWM <- post$a + post$b.OWM
+mu.S <- post$a + post$b.S
+# summarize using precis
+precis( data.frame(mu.ape,mu.NWM,mu.OWM,mu.S) )
+
+# 5.53
+diff.NWM.OWM <- mu.NWM - mu.OWM
+quantile( diff.NWM.OWM , probs=c(0.025,0.5,0.975) )
+
+# 5.54
+( d$clade_id <- coerce_index(d$clade) )
+
+# 5.55
+m5.16_alt <- map(
+  alist(
+    kcal.per.g ~ dnorm( mu , sigma ) ,
+    mu <- a[clade_id] ,
+    a[clade_id] ~ dnorm( 0.6 , 10 ) ,
+    sigma ~ dunif( 0 , 10 )
+  ) ,
+  data=d )
+precis( m5.16_alt , depth=2 )
+
+# 5.56
+m5.17 <- lm( y ~ 1 + x , data=d )
+m5.18 <- lm( y ~ 1 + x + z + w , data=d )
+
+
+
