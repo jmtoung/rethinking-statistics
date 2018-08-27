@@ -1,5 +1,37 @@
 library(rethinking)
 
+# 5E1.
+# 2, 4?
+
+# 5E2.
+# animal_diversity ~ latitude + plant_diversity
+# animal_diversity ~ dnorm(mu, sigma)
+# mu <- a + bL * latitude + bP * plant_diversity
+
+# 5E3.
+# time ~ funding + size
+
+# 5E4.
+# 1, 3, 4, 5
+
+# 5M1.
+# x_real is a normal distribution
+trials <- 1e3
+x_real <- rnorm(n= trials)
+x_spurious <- rnorm(n=trials, mean=x_real)
+y <- rnorm(n=trials, mean=x_real)
+
+df <- data.frame(y=y, x_real=x_real, x_spurious=x_spurious)
+
+# model: y ~ x_real + x_spurious
+
+# 5M2.
+rho <- .7
+x_pos <- rnorm(trials)
+x_neg <- rnorm(trials, rho*x_pos, sqrt(1-rho^2))
+y <- rnorm(trials, xpos - x_neg)
+d <- data.frame(y, x_pos, x_neg)
+
 # 5H1.
 data(foxes)
 d <- foxes
